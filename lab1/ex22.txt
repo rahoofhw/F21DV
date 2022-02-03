@@ -1,0 +1,52 @@
+
+<!DOCTYPE html>
+<html>
+  <meta charset="utf-8" />
+  <body>
+     <script src='https://d3js.org/d3.v7.min.js'></script>
+      <script>
+      const xSize = 300; const ySize = 300; const margin = 40;
+      const xMax = xSize - margin*2;const yMax = ySize - margin*2;
+      
+      // Create Random Points
+      const numPoints = 100;
+      const data = [];      const data2 = [];
+      for (let i = 0; i < numPoints; i++) { data.push( {x: i/100, y: Math.sin( 6.2 * i/100 ) } ); }
+      for (let i = 0; i < numPoints; i++) { data2.push( {x: i/100, y: Math.cos( 6.2 * i/100 ) } ); }
+      
+      draw(data);   draw(data2);
+      
+      function draw(data){
+         // Get the 'limits' of the data - the full extent (mins and max)
+      // so the plotted data fits perfectly
+      const xExtent = d3.extent( data, d=>{ return d.x } );
+      const yExtent = d3.extent( data, d=>{ return d.y } );
+
+      const svg = d3.select("body").append("svg").attr('width', xSize ).attr('height', ySize ).append("g")
+      .attr("transform","translate(" + margin + "," + margin + ")");
+      
+      // X Axis
+      const x = d3.scaleLinear().domain([ xExtent[0], xExtent[1] ]).range([0, xMax]);
+      svg.append("g").attr("transform", "translate(0," + yMax + ")").call(d3.axisBottom(x)).attr('color', 'green'); 
+      svg.append("g").call(d3.axisTop(x));
+      
+      // Y Axis
+      const y = d3.scaleLinear().domain([ yExtent[0], yExtent[1] ]).range([ yMax, 0]);
+      svg.append("g").call(d3.axisLeft(y));
+      svg.append("g").attr("transform", `translate(${yMax},0)`).call(d3.axisRight(y));
+      
+      // Add the line
+      svg.append("path").datum(data).attr("fill", "none").attr("stroke", "steelblue").attr("stroke-width", 1.5).attr("d", d3.line().x(function(d) { return x(d.x) }).y(function(d) { return y(d.y) })
+      );
+      }
+      
+      </script>
+  </body>
+</html>
+
+
+
+
+
+
+

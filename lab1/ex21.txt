@@ -1,0 +1,48 @@
+
+<!DOCTYPE html>
+<html>
+  <meta charset="utf-8" />
+  <body>
+     <script src='https://d3js.org/d3.v7.min.js'></script>
+      <script>
+         const data = [50, 400, 300, 900, 250, 1000];
+         const width = 500; const barHeight = 20; const margin = 1;
+         
+         var scale = d3.scaleLinear().domain([d3.min(data), d3.max(data)]).range([50, 300]);
+         var svg = d3.select("body").append("svg").attr("width", width+100).attr("height",( barHeight * data.length)+ 30);
+         
+         var g = svg.selectAll("g") .data(data) .enter().append("g") .attr("transform", function (d, i) {
+                  return "translate(50," + i * barHeight + ")";});
+       
+         g.append("rect").attr("width", function (d) {return scale(d);}).attr("height", barHeight - margin)
+         .attr('fill',  function (d) {
+            var color = 'blue';
+            if(d>500){color= 'red';}  else if(d<100){color= 'green';} 2
+            return color;
+         });
+         g.append("text").attr("x", function (d) { return (scale(d)+50); }).attr("y", barHeight / 2)
+         .attr("dy", ".35em").style('text-anchor', 'end').text(function (d) { return d; });
+         
+         var xscale = d3.scaleLinear().domain([0, d3.max(data)]).range([0, 300]);
+
+         var  bottomtranslate = data.length*barHeight
+         var x_axis_bottom = d3.axisBottom().scale(xscale);
+         svg.append("g").attr("transform", "translate(50, " + bottomtranslate +")").call(x_axis_bottom);
+      
+         var yscale = d3.scaleLinear().domain([0, data.length]).range([bottomtranslate , 0]);
+         var y_axis_left = d3.axisLeft().scale(yscale);
+         svg.append("g").attr("transform", "translate(50, " + 0 +")").call(y_axis_left);
+
+      </script>
+  </body>
+  
+</html>
+
+
+
+
+
+
+
+
+
