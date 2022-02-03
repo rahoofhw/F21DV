@@ -1,0 +1,42 @@
+
+<!DOCTYPE html>
+<html>
+  <meta charset="utf-8" />
+  <body>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        svg rect { fill: blue; }
+        svg text {fill:black;font: 10px sans-serif;}
+    </style>
+    <script>
+        // var data = [5, 10, 12, 6];
+        let heartfailurecsv = 'https://raw.githubusercontent.com/akmand/datasets/master/heart_failure.csv';
+        
+        var width = 300;
+        var scaleFactor = 2;
+        var barHeight = 20;
+        var graph = d3.select("body").append("svg").attr("width", width);
+       
+        d3.csv(heartfailurecsv, function(data,i) {
+            graph.attr("height",(i+1)*barHeight);
+            var d = data.age;
+            var bar = graph.append("g").attr("transform", "translate(0," + i * barHeight + ")");
+            bar.append("rect").attr("width",d*scaleFactor).attr("height", barHeight - 3);
+            bar.append("text").attr("x",( d*scaleFactor)+2)
+            .attr("y", barHeight / 2).attr("dy", ".35em") .text(d);
+        });
+        
+       
+    </script>
+  </body>
+  
+</html>
+
+
+
+
+
+
+
+
+

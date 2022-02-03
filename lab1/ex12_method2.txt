@@ -1,0 +1,55 @@
+
+<!DOCTYPE html>
+<html>
+  <meta charset="utf-8" />
+  <body>
+    <input type="file" id="files_input" multiple/>
+    <button id="show">Show</button>    <br/><br/>
+    <div id ="canvas"></div>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script> 
+        var csvRecordsArray =[];
+        files_input.addEventListener('change', openFiles, false);
+        
+        document.getElementById('show').addEventListener('click', function () {
+                plot(csvRecordsArray[0]);
+        }, false);
+        
+        function plot(data){
+        var svg = d3.select("#canvas").append("svg").attr("width", 400)
+                    .attr("height", 400).style("border", '1px solid green');
+                    
+        for(var i = 0; i < data.length; i++) {
+            var attr = [];
+            if(data[i].includes(",")){
+                attr = data[i].split(",");
+                if(attr[0]=="rect"){
+                 svg.append(attr[0]).attr("x", attr[1]).attr("y", attr[2]) .attr("width",attr[3]).attr("height",attr[4]).attr("fill", attr[5]);
+                }else if(attr[0]=="circle"){
+                 svg.append(attr[0]).attr("cx", attr[1]).attr("cy", attr[2]) .attr("r",attr[3]).attr("fill", attr[4]);
+                }else if(attr[0]=="ellipse"){
+                 svg.append(attr[0]).attr("cx", attr[1]).attr("cy", attr[2]) .attr("rx",attr[3]).attr("ry",attr[4]).attr("fill", attr[5]);
+                }
+            
+            }
+        }}
+        
+        function openFiles(evt) {
+            var files = evt.target.files;
+        
+            for (var i = 0; i < files.length; i++) {
+                var file = files[i],
+                    reader = new FileReader();
+                reader.onload = (function (file) { return function (e) { 
+                        var data = this.result; 
+                        csvRecordsArray.push(data.split(/\r\n|\n/));  
+                } })(file);
+                reader.readAsText(file);
+            }
+        }
+    </script>
+  </body>
+</html>
+
+
+

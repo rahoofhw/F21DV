@@ -1,0 +1,34 @@
+
+<!DOCTYPE html>
+<html>
+  <meta charset="utf-8" />
+  <body>
+
+    <div id ="canvas"></div>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script> 
+        var svg = d3.select("#canvas").append("svg").attr("width", 400).attr("height", 400).style("border", '1px solid green');    
+        var datacsv = 'https://raw.githubusercontent.com/rahoofhw/F21DV/0c6e7daa380f3f5eee182a3496bfc0f20739ea7f/shapes.csv'; 
+         d3.csv(datacsv, function(data) { 
+            plot(data.shape,svg);
+        }); 
+        function plot(data,svg){
+            var attr = [];
+            if(data.includes("$")){
+                attr = data.split("$");
+                if(attr[0]=="rect"){
+                 svg.append(attr[0]).attr("x", attr[1]).attr("y", attr[2]) .attr("width",attr[3]).attr("height",attr[4]).attr("fill", attr[5]);
+                }else if(attr[0]=="circle"){
+                 svg.append(attr[0]).attr("cx", attr[1]).attr("cy", attr[2]) .attr("r",attr[3]).attr("fill", attr[4]);
+                }else if(attr[0]=="ellipse"){
+                 svg.append(attr[0]).attr("cx", attr[1]).attr("cy", attr[2]) .attr("rx",attr[3]).attr("ry",attr[4]).attr("fill", attr[5]);
+                }
+            
+            }
+        }
+    </script>
+  </body>
+</html>
+
+
+
