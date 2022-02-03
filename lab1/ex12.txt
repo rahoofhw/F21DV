@@ -8,7 +8,7 @@
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script> 
         var svg = d3.select("#canvas").append("svg").attr("width", 400).attr("height", 400).style("border", '1px solid green');    
-        var datacsv = 'https://raw.githubusercontent.com/rahoofhw/F21DV/0c6e7daa380f3f5eee182a3496bfc0f20739ea7f/shapes.csv'; 
+        var datacsv = 'https://raw.githubusercontent.com/rahoofhw/F21DV/ddeea3b245381daca993a645099a570a3b0c83c1/lab1/files/shapes.csv'; 
          d3.csv(datacsv, function(data) { 
             plot(data.shape,svg);
         }); 

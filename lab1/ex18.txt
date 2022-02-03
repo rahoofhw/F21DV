@@ -12,7 +12,7 @@
       const barHeight = 20;
       const margin = 1;
       
-      var heartfailurecsv = 'http://127.0.0.1:8887/F21DV/lab1/files/chartdata.csv';
+      var heartfailurecsv = 'https://raw.githubusercontent.com/rahoofhw/F21DV/ddeea3b245381daca993a645099a570a3b0c83c1/lab1/files/chartdata.csv';
       var scale = d3.scaleLinear().domain([d3.min(data), d3.max(data)]).range([50, 500]);
       var svg = d3.select("body").append("svg").attr("width", width);
       
