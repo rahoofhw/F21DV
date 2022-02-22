@@ -1,4 +1,4 @@
-<!-- source is https://bl.ocks.org/mbostock/4060366 -->
+<!-- Exercise 4:  ‘selecting’ and modifying your ‘div’ elements after you’ve created and added them (e.g., select the first div element and make its content text equal to ‘start’ – also change its color to ‘purple’.  -->
 <!DOCTYPE html>
 <htmL>
 <meta charset="utf-8">
@@ -12,8 +12,10 @@ var element = document.getElementById("version");
 
 element.innerHTML ="D3 version: " + d3.version 
 
+// running loop to add 10 div elements
 for (let i = 1; i <= 10; i++) {
 
+	// appending a div  to body 
     let newdiv = d3.select("body").append('div'); 
     newdiv.text(i); 
     if(i<=5){

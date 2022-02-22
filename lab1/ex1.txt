@@ -1,4 +1,4 @@
-<!-- source is https://bl.ocks.org/mbostock/4060366 -->
+<!-- Exercise1 : What version number is displayed in the console output window?-->
 <!DOCTYPE html>
 <htmL>
 <meta charset="utf-8">
@@ -8,6 +8,8 @@
 
 <script src='https://d3js.org/d3.v7.min.js'></script>
 <script>
+
+// Fetching element with id version and setting it's innner html
 var element = document.getElementById("version");
 
 element.innerHTML ="D3 version: " + d3.version

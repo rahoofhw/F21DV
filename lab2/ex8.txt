@@ -1,0 +1,29 @@
+
+
+<!DOCTYPE html>
+<html>
+  <meta charset="utf-8" />
+  <body>
+     <script src='https://d3js.org/d3.v7.min.js'></script>
+    <script>
+        d3.select('body').append("div").style('width', '100px').style('height', '100px').style('background-color', 'blue');
+        
+        d3.select("div").on("mouseover", function(event){
+            d3.select(this).transition().duration(1000).style("background-color", "red").style('height', '200px').style('width', '300px');
+        
+        })
+        .on("mouseout", function(){
+            d3.select(this).transition().duration(2000).style('width', '100px').style('height', '100px').style('background-color', 'blue');
+        });
+    </script>
+  </body>
+</html>
+
+
+
+
+
+
+
+
+

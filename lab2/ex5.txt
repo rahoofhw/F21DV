@@ -1,0 +1,27 @@
+
+
+<!DOCTYPE html>
+<html>
+  <meta charset="utf-8" />
+  <body>
+     <script src='https://d3js.org/d3.v7.min.js'></script>
+    <script>
+        const svg = d3.select("body").append("svg") .attr("width", 400).attr("height", 400).style("border",'1px solid green');
+   
+        svg.on("mouseover", function(event){
+            setTimeout(()=>{
+                svg.append("text").attr("x", d3.pointer(event)[0] ).attr("y", d3.pointer(event)[1] ).text(d3.pointer(event));
+            }, 100);
+        });
+    </script>
+  </body>
+</html>
+
+
+
+
+
+
+
+
+

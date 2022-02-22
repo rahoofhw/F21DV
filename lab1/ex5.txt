@@ -1,4 +1,4 @@
-<!-- source is https://bl.ocks.org/mbostock/4060366 -->
+<!-- Exercise 5: Exercise: Add to the ‘chain syntax’ version for the ‘hello world’ example above – so it also sets the ‘color’ of the text to green.  -->
 <!DOCTYPE html>
 <htmL>
 <meta charset="utf-8">
@@ -7,10 +7,17 @@
 
 <script src='https://d3js.org/d3.v7.min.js'></script>
 <script>
+// selecting body
 var bodyElement = d3.select("body"); 
+
+//appending div element to body element 
 var div = bodyElement.append("div"); 
+
+//setting text to div element
 div.text("Hello World!"); 
 
+
+//selecting body ,appending div and setting text and style using chain syntax
 d3.select("body").append('div').text("Hello World!").style('color','green');
 </script>
 </body>

@@ -1,4 +1,5 @@
-<!-- source is https://bl.ocks.org/mbostock/4060366 -->
+<!-- Exercise 3: Write a loop which adds 10 ‘div’ elements and sets the contents to the count value (i.e., 1, 2, 3,).  Also the color of the first 5 elements are red and the last 5 elements are green (lookup the attr(), property() and style() methods).-->
+
 <!DOCTYPE html>
 <htmL>
 <meta charset="utf-8">
@@ -6,19 +7,20 @@
 <body>
 <h1 id="version" ></h1>
 
-
-
 <script src='https://d3js.org/d3.v7.min.js'></script>
 <script>
 var element = document.getElementById("version");
 
 element.innerHTML ="D3 version: " + d3.version 
 
+// running loop to add 10 div elements
 for (let i = 1; i <= 10; i++) {
 
+	// appending a div  to body 
     let newdiv = d3.select("body").append('div'); 
     newdiv.text(i); 
     
+	//checking index and setting color  of  tag
     if(i<=5){
         newdiv.style('color','red');
     }else{

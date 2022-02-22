@@ -1,4 +1,5 @@
-<!-- source is https://bl.ocks.org/mbostock/4060366 -->
+<!-- Exercise 2: Change other style properties of the paragraph tag (e.g., font-size, line-height, font-family, 
+contents, ...)  -->
 <!DOCTYPE html>
 <htmL>
 <meta charset="utf-8">
@@ -14,10 +15,12 @@
 <script src='https://d3js.org/d3.v7.min.js'></script>
 <script>
 var element = document.getElementById("version");
-
 element.innerHTML ="D3 version: " + d3.version 
 
+//Fetching first elemtent with ptag  and  setting its color as blue 
 d3.select("p").style("color", "blue");
+
+//selecting all elements with test class and changing their style
 var testheader = d3.selectAll(".test");
 testheader.style("color", "red");
 testheader.style("font-family", "Arial");
