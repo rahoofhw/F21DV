@@ -39,10 +39,14 @@ Exercise 21: Add an axis to the top and to the right of the bar chart (also disp
             .attr("x", function(d) { return x(d.group); }) .attr("y", function(d) { return y(d.value); })
             .attr("width", x.bandwidth()).attr("height", function(d) { return height - y(d.value); }).attr("fill", clr);
             }
+
+             // add value text directly above bar 
             function onMouseOver(d, i) {
                 svg.append("text").attr('class', 'val').attr('x', function() {return x(i.group);})
                 .attr('y', function() {return 0;}).text( function(d) { return i.value; } ); 
             }
+            
+            // removing the text after mouseout
             function onMouseOut(d, i) {
                 d3.selectAll('.val').remove()
             }

@@ -1,6 +1,4 @@
 
-Exercise 20: Add an additional ‘event’ so that when the ‘mouse’ moves over each bar it displays a text svg above the bar with the ‘value’ of the data.
-
 <!DOCTYPE html>
 <html>
   <meta charset="utf-8" />
@@ -37,10 +35,14 @@ Exercise 20: Add an additional ‘event’ so that when the ‘mouse’ moves ov
             .attr("x", function(d) { return x(d.group); }) .attr("y", function(d) { return y(d.value); })
             .attr("width", x.bandwidth()).attr("height", function(d) { return height - y(d.value); }).attr("fill", clr);
             }
+            
+            // add value text directly above bar 
             function onMouseOver(d, i) {
                 svg.append("text").attr('class', 'val').attr('x', function() {return x(i.group);})
                 .attr('y', function() {return 0;}).text( function(d) { return i.value; } ); 
             }
+            
+            // removing the text after mouseout
             function onMouseOut(d, i) {
                 d3.selectAll('.val').remove()
             }
