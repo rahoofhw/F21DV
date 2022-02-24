@@ -1,0 +1,47 @@
+Exercise 27: Add an additional data set and modify to the code so the ‘pie chart’ transitions (animated) between the currently displayed data set and your new test data set (e.g., click button the pie chart segments animate to new data values). Note, all the segments should not ‘pop’ out/in but should transition smoothly.
+
+<!DOCTYPE html>
+<html>
+  <meta charset="utf-8" />
+  <body>
+        <script src="//d3js.org/d3.v7.min.js"></script>
+        <button onclick = "drawPie(dataset_apples)"> apples</button>
+        <button onclick = "drawPie(dataset_oranges)"> oranges</button>
+        <script>
+            var dataset_apples= [5345, 2879, 1997, 2437, 4045];
+            var dataset_oranges= [2345, 879, 9997, 1437, 2045];
+            
+            var width = 460, height = 300, radius = Math.min(width, height) / 2;
+            var color = d3.scaleOrdinal().range(d3.schemeSet3);
+            var pie = d3.pie() .sort(null);
+            var arc = d3.arc() .innerRadius(radius - 100).outerRadius(radius - 50);
+            
+            var svg = d3.select("body").append("svg").attr("width", width).attr("height", height)
+            .append("g") .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+            drawPie(dataset_apples);
+
+            function drawPie(data){
+                svg.selectAll("path").remove();
+                var path = svg.selectAll("path").data(pie(data));
+                path.enter().append("path").attr("fill", function(d, i) { return color(i); }).attr("d", arc)
+                .transition().duration(1000).attrTween("d", function (d) {
+                    var i = d3.interpolate(d.endAngle, d.startAngle);
+                    return function (t) {
+                        d.startAngle = i(t);
+                        return arc(d);
+                    }
+                });
+            }
+            
+        </script>
+  </body>
+</html>
+
+
+
+
+
+
+
+
+

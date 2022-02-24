@@ -1,25 +1,18 @@
 
-
 <!DOCTYPE html>
 <html>
   <meta charset="utf-8" />
   <body>
      <script src='https://d3js.org/d3.v7.min.js'></script>
     <script>
+        // adding an svg element and creating a circle 
         const svg = d3.select("body").append("svg") .attr("width", 400).attr("height", 400);
         const g = svg.append("g").append("circle").attr("cx",100).attr("cy",100).attr("r", 40).attr("fill",'steelblue');
     
+        // adding mouseover and mouse out events to change size and color
         g.on("mouseover", function(){ d3.select(this).attr("r", 80).style("fill", "orange");})
         .on("mouseout", function(){d3.select(this).attr("r", 40).style("fill", "steelblue");});
     </script>
   </body>
 </html>
-
-
-
-
-
-
-
-
 

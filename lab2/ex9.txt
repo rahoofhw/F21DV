@@ -6,16 +6,19 @@
   <body>
      <script src='https://d3js.org/d3.v7.min.js'></script>
     <script>
+        // using easeBounce easing method
         d3.select('body').append("div").style('width', '100px')
         .style('height', '100px').style('background-color', 'blue').style('transform', 'scale(1.0)')
         .transition().ease( d3.easeBounce ).duration(1000)
         .style("background-color", "red").style('transform', 'scale(0.5)');
         
+        // using easeElastic easing method
         d3.select('body').append("div").style('width', '100px')
         .style('height', '100px').style('background-color', 'green').style('transform', 'scale(1.0)')
         .transition().ease( d3.easeElastic ).duration(1000)
         .style("background-color", "yellow").style('transform', 'scale(0.5)');       
         
+        // using easeCircle easing method
         d3.select('body').append("div").style('width', '100px')
         .style('height', '100px').style('background-color', 'pink').style('transform', 'scale(1.0)')
         .transition().ease( d3.easeCircle ).duration(1000)

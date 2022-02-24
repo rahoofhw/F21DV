@@ -6,6 +6,7 @@
   <body>
      <script src='https://d3js.org/d3.v7.min.js'></script>
     <script>
+        // creating a div element and transitioning it from blue to red to green 
         d3.select('body').append("div").style('width', '100px').style('height', '100px').style('background-color', 'blue')
         .transition().duration(1000).style("background-color", "red")
         .transition().duration(2000).style("background-color", "green");

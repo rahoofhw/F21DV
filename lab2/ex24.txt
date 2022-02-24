@@ -1,0 +1,22 @@
+
+
+<!DOCTYPE html>
+<html>
+  <meta charset="utf-8" />
+
+  <body>
+
+        <script src='https://d3js.org/d3.v7.min.js'></script>
+        <script>
+	// creating a interpolation function for two arrays of numbers
+            let intr = d3.interpolate( [20, 40, 4], [1, 12, 10])
+            console.log("Type of returned function is: ", typeof (intr) );
+            console.log( intr(0.2) )
+        </script>
+  </body>
+</html>
+
+
+
+
+

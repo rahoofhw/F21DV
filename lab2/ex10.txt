@@ -6,14 +6,15 @@
   <body>
      <script src='https://d3js.org/d3.v7.min.js'></script>
     <script>
-    
+        // created a svg circle
     const svg = d3.select("body").append("svg") .attr("width", 400).attr("height", 400);
         const g = svg.append("g").append("circle").attr("cx",100).attr("cy",100).attr("r", 40).attr("fill",'steelblue');
     
-        g.on("mouseover", function(){ d3.select(this).attr("r", 80)
-        .transition().ease( d3.easeBounce ).duration(1000).style("fill", "orange");})
-        .on("mouseout", function(){d3.select(this).attr("r", 40)
-        .transition().ease( d3.easeBounce ).duration(1000).style("fill", "steelblue");});
+        // increasing size of cicle and changing color on mouse hover
+        g.on("mouseover", function(){ d3.select(this)
+        .transition().ease( d3.easeBounce ).duration(1000).attr("r", 80).style("fill", "orange");})
+        .on("mouseout", function(){d3.select(this)
+        .transition().ease( d3.easeBounce ).duration(1000).attr("r", 40).style("fill", "steelblue");});
     
     </script>
   </body>

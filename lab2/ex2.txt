@@ -18,6 +18,7 @@
   <body>
      <script src='https://d3js.org/d3.v7.min.js'></script>
      <script>
+        //Creating elements and giving a class to it
          d3.select("body").append("span").text("Hover to see message !!!").attr("class","spanstyle");
          d3.select("body").append("div").text(" Message-------- !!!").attr("class","divstyle");
          

@@ -6,12 +6,13 @@
   <body>
      <script src='https://d3js.org/d3.v7.min.js'></script>
     <script>
+        // created a svg with a border to form a box
         const svg = d3.select("body").append("svg") .attr("width", 400).attr("height", 400).style("border",'1px solid green');
    
-        svg.on("mouseover", function(event){
-            setTimeout(()=>{
-                svg.append("text").attr("x", d3.pointer(event)[0] ).attr("y", d3.pointer(event)[1] ).text(d3.pointer(event));
-            }, 100);
+        // added mouse move event to remove previously displayed location and add new pointer location
+        svg.on("mousemove", function(event){
+            d3.selectAll(".text").remove();
+            svg.append("text").attr("x", d3.pointer(event)[0] ).attr("y", d3.pointer(event)[1] ).text(d3.pointer(event)).attr("class","text");
         });
     </script>
   </body>
