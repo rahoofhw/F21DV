@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+  <meta charset="utf-8" />
+  <body>
+       <script type='text/javascript' src='https://d3js.org/d3.v7.min.js'></script>
+        <script>
+            var width = 400, height = 400;
+            // setup svg
+            d3.select('body').append('svg').attr('width',width).attr('height',height);
+            
+            // random data
+            var nodes = [{radius: 24}, {radius: 10}, {radius: 10}, {radius: 8}, {radius: 15}, {radius: 19}, {radius: 1}, {radius: 0}, {radius: 13}, {radius: 2}, {radius: 24}, {radius: 16}, {radius: 24}, {radius: 24}, {radius: 24}, {radius: 20}, {radius: 24}, {radius: 7}, {radius: 8}, {radius: 14}, {radius: 14}, {radius: 22}, {radius: 17}, {radius: 4}, {radius: 6}, {radius: 7}, {radius: 14}, {radius: 7}, {radius: 13}, {radius: 23}, {radius: 14}, {radius: 18}, {radius: 23}, {radius: 6}, {radius: 20}, {radius: 2}, {radius: 1}, {radius: 10}, {radius: 11}, {radius: 23}, {radius: 15}, {radius: 22}, {radius: 13}, {radius: 21}, {radius: 0}, {radius: 3}, {radius: 19}, {radius: 7}, {radius: 15}, {radius: 8}];
+            
+            var myColor = d3.scaleLinear()
+                .domain([d3.min(nodes, function(d) { return d.radius; }),d3.max(nodes, function(d) { return d.radius; })])
+                .range( ["blue","red"]);
+
+            var simulation = d3.forceSimulation(nodes)
+                            .force('charge', d3.forceManyBody().strength(5))
+                            .force('center', d3.forceCenter(width / 2, height / 2))
+                            .force('collision', d3.forceCollide().radius(function(d) { return d.radius }))
+                            .on('tick', ticked);
+            
+            function ticked() {
+                var u = d3.select('svg').selectAll('circle').data(nodes).join('circle')
+                        .attr('fill', function(d) {return myColor(d.radius) }).attr('r', function(d) {return d.radius })
+                        .attr('cx', function(d) { return d.x}) .attr('cy', function(d) { return d.y });
+            }
+        </script>
+  </body>
+</html>
+
+
+
+
+
+
+
+
+
