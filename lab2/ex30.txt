@@ -33,7 +33,7 @@
                             svg.append('text') .attr('x', function() { return d.x}) .attr('y', function() { return d.y  }) 
                             .text(function() { return Math.floor(d.radius)})
     		            }).on('mouseout',function(i,d){
-                             d3.select('text').remove();
+                             d3.selectAll('text').remove();
     		            });
             }
         </script>
