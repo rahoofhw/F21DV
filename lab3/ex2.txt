@@ -1,0 +1,105 @@
+
+<!--
+https://covid.ourworldindata.org/data/owid-covid-data.csv
+https://github.com/owid/covid-19-data/tree/master/public/data
+-->
+
+<!--https://raw.githubusercontent.com/owid/covid-19-data/master/public/data/owid-covid-data.csv-->
+
+<!DOCTYPE html>
+<html>
+  <meta charset="utf-8" />
+  <body>
+        <label>Continents :</label>
+        <select id="continent_select" onchange = "selectContent(event)">Select </select>
+        
+        <script src='https://d3js.org/d3.v7.min.js'></script>
+        <script>
+            const csvfile = 'https://raw.githubusercontent.com/owid/covid-19-data/master/public/data/owid-covid-data.csv';
+            var dataset ;
+            var unique_continents= new Array();
+            const xSize = 500; const ySize = 500; const margin = 40;
+            const xMax = xSize - margin*2;const yMax = ySize - margin*2;
+            const svg = d3.select("body").append("svg").attr('width', xSize ).attr('height', ySize ).append("g")
+                  .attr("transform","translate(" + margin + "," + margin + ")");
+    
+            d3.csv(csvfile).then(function(data) {
+                dataset = data;
+                var continents=  d3.map(data, function(d){return d.continent;});
+                unique_continents= continents.filter((item, i, ar) => ar.indexOf(item) === i);
+                setSelectContinents();
+                console.log("unique ::",unique_continents);
+                var key1 = 'date';
+                
+                var key2 = 'total_cases';
+                var datacheck= d3.map(data, function(d){return  {x:  d[key1], y:d[key2]}});
+
+                var reproduction_rate=  d3.map(data, function(d){return d.reproduction_rate;});
+                console.log("unique ::",datacheck);
+    draw(svg,dataset,key1,key2);
+            });
+          
+            function setSelectContinents(){
+                let continent_select = document.getElementById('continent_select');
+                unique_continents.forEach(option =>{
+                    if(option){
+                        continent_select.options.add(new Option(option, option, option.selected));
+                    }
+                });
+                
+            }
+            function selectContent(event){
+                console.log("selectContinent",event,event.target.value);
+                
+            }
+            
+            function draw(svg,plotdata,key1,key2){
+                            const xSize = 500; const ySize = 500; const margin = 40;
+
+                            const xMax = xSize - margin*2;const yMax = ySize - margin*2;
+
+                const filtered= d3.map(plotdata, 
+                function(d){ 
+                    // if(d[key1]&& d[key2]) {return   {x:  parseInt(d[key1].replace('-','')), y: d[key2]*10}}
+                     if(d[key1]&& d[key2]) {return   {x:  new Date(d[key1]), y: parseInt(d[key2]),z:d.continent}}
+
+                    return   {x:  0, y:0}
+                    
+                });
+                const data= filtered.filter(function (d) {
+                        
+                         return (d.x != 0) && (!isNaN(d.y));
+                        //  return !isNaN(d.y);
+                        
+                    });
+                    
+                    console.log(data.length, plotdata.length);
+                
+                // for (let i = 0; i < plotdata.length; i++) { data.push( {x: i/100, y: Math.sin( 6.2 * i/100 ) } ); }
+                const xExtent = d3.extent( data, d=>{ return d.x } );
+                const yExtent = d3.extent( data, d=>{ return d.y } );
+                
+                console.log(xExtent,yExtent);
+                // X Axis
+                const x = d3.scaleLinear().domain([ xExtent[0], xExtent[1] ]).range([0, xMax]);
+                svg.append("g").attr("transform", "translate(0," + yMax + ")").call(d3.axisBottom(x)); 
+                svg.append("g").call(d3.axisTop(x));
+                
+                // Y Axis
+                const y = d3.scaleLinear().domain([ yExtent[0], yExtent[1] ]).range([ yMax, 0]);
+                svg.append("g").call(d3.axisLeft(y));
+                svg.append("g").attr("transform", `translate(${yMax},0)`).call(d3.axisRight(y));
+                
+                var myColor = d3.scaleOrdinal().domain(unique_continents).range(d3.schemeSet3);
+                // Add the line
+                // svg.append("path").datum(data).attr("fill", "none").attr("stroke", "blue").attr("stroke-width", 1.5).attr("d", d3.line().x(function(d) { return x(d.x) }).y(function(d) { return y(d.y) })
+                // );   
+                svg.selectAll("dot").data(data).enter().append("circle").attr("cx", function (d) { return x(d.x);} )
+                .attr("cy", function (d) { return y(d.y) } ).attr("r", 2).style("fill", function (d) { return myColor(d.z)});
+            }
+        </script>
+  </body>
+</html>
+
+
+
