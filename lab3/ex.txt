@@ -18,20 +18,30 @@ https://github.com/owid/covid-19-data/tree/master/public/data
         <select id="country_select" onchange = "selectCountry(event)">
                 <option selected disabled> select</option> 
         </select>
-        <div class="row" style="padding:20px;">
-            <div style="padding:10px;"> Date Vs Total Cases</div>    
-            <div id ="canvas1"></div>
+        <div class="row" style="padding:20px ; display: table;">
+        <div style="display: table-row; padding:10px;">
+            <div style="display: table-cell;">
+                <div style="padding:10px;"> Date Vs Total Cases</div>    
+                <div id ="canvas1"></div>   
+            </div>
+           
+            <div style="display: table-cell;; padding:10px;">
+                <div style="padding:10px;"> GDP per Capita Income Vs Total Cases</div>    
+                <div id ="canvas2"></div>
+            </div>
             
-            <div style="padding:10px;"> GDP per Capita Income Vs Total Cases</div>    
-            <div id ="canvas2"></div>
-            
-            <div style="padding:10px;"> 
+            <div style="display: table-cell; padding:10px;">
+                <div style="padding:10px;"> 
                 <select id="vaccine" onchange = "setVaccine(event)">
                 <option selected  value= 'total_vaccinations'> Total Vaccines</option> 
                 <option  value ='total_boosters' > Booster Vaccines</option> 
                 </select> 
                 Vs New Cases</div>    
-            <div id ="canvas3"></div>
+                <div id ="canvas3"></div>
+            </div>
+        </div>
+            
+            
         </div>
        
 
@@ -43,7 +53,7 @@ https://github.com/owid/covid-19-data/tree/master/public/data
             var dataset ;
             var unique_continents= new Array();
             var unique_countries= new Array();
-            const xSize = 700; const ySize = 500; const margin = 60;
+            const xSize = 500; const ySize = 400; const margin = 60;
             const xMax = xSize - margin*2;const yMax = ySize - margin*2;
              var vaccine_data; var current_key;
             //Creating Canvas for the graphs
