@@ -19,13 +19,18 @@ https://github.com/owid/covid-19-data/tree/master/public/data
                 <option selected disabled> select</option> 
         </select>
         <div class="row" style="padding:20px;">
-            <div> Date Vs Total Cases</div>    
+            <div style="padding:10px;"> Date Vs Total Cases</div>    
             <div id ="canvas1"></div>
             
-            <div> GDP per Capita Income Vs Total Cases</div>    
+            <div style="padding:10px;"> GDP per Capita Income Vs Total Cases</div>    
             <div id ="canvas2"></div>
             
-            <div> Total Vaccine Vs Total Cases</div>    
+            <div style="padding:10px;"> 
+                <select id="vaccine" onchange = "setVaccine(event)">
+                <option selected  value= 'total_vaccinations'> Total Vaccines</option> 
+                <option  value ='total_boosters' > Booster Vaccines</option> 
+                </select> 
+                Vs New Cases</div>    
             <div id ="canvas3"></div>
         </div>
        
@@ -40,7 +45,7 @@ https://github.com/owid/covid-19-data/tree/master/public/data
             var unique_countries= new Array();
             const xSize = 700; const ySize = 500; const margin = 60;
             const xMax = xSize - margin*2;const yMax = ySize - margin*2;
-            
+             var vaccine_data; var current_key;
             //Creating Canvas for the graphs
             const canvas1 = d3.select("#canvas1").append("svg").attr("style", "outline: thin solid black;").attr('width', xSize ).attr('height', ySize ).append("g").attr("transform","translate(" + margin + "," + margin + ")");
             const canvas2 = d3.select("#canvas2").append("svg").attr("style", "outline: thin solid black;").attr('width', xSize ).attr('height', ySize ).append("g").attr("transform","translate(" + margin + "," +margin + ")");
@@ -87,7 +92,14 @@ https://github.com/owid/covid-19-data/tree/master/public/data
                 //filteing data set to get data of the continent selected
                 var dataset1=  dataset.filter(function (d) { return (d[key] == continent)});
                  
-                 
+                   
+                // filtering countries in the selected continent
+                var countries=  d3.map(dataset1, function(d){return d['location'];});
+                unique_countries= countries.filter((item, i, ar) => ar.indexOf(item) === i);
+                console.log("countries data ",unique_countries.length);
+                setSelectCountry(); //setting countries in select options
+                
+                
                  //filtering the rquired columns for the graph1 date, total cases, continent,location
                 const filtered= d3.map(dataset1, function(d){ 
                     if(d[key1]&& d[key2]) {return   {x:  new Date(d[key1]), y: parseInt(d[key2]),z:d.continent,t:d.location}}
@@ -104,19 +116,21 @@ https://github.com/owid/covid-19-data/tree/master/public/data
                 const data2= filtered2.filter(function (d) { return (d.x != 0) && (!isNaN(d.y)); });
                 draw(canvas2,data2,key); //drawing the graph
 
-                //filtering the rquired columns for the graph3 total vaccinations, new_cases, continent,location
-                var key4 ='total_vaccinations'; var key5='new_cases';
-                const filtered3= d3.map(dataset1, function(d){ 
-                    if(d[key4]&& d[key5]) {return   {x:parseInt(d[key4]), y: parseInt(d[key5]),z:d.continent,t:d.location}}  return   {x:  0, y:0}
-                });
-                const data3= filtered3.filter(function (d) { return (d.x != 0) && (!isNaN(d.y)); });
-                draw(canvas3,data3,key);   //drawing the graph
+                //for the graph3
+                vaccine_data = dataset1 ; current_key=key;
+                var key4 ='total_vaccinations';
+                drawVaccineGraph(key4) ;
+              
+            }
+            function setVaccine(event){
+                console.log( event.target.value);
+                var  key =  event.target.value;
+                if(vaccine_data && current_key){
+                    drawVaccineGraph(key) ;
+                }else{
+                    console.log("missing data" );
+                }
                 
-                // filtering countries in the selected continent
-                var countries=  d3.map(dataset1, function(d){return d['location'];});
-                unique_countries= countries.filter((item, i, ar) => ar.indexOf(item) === i);
-                console.log("countries data ",unique_countries.length);
-                setSelectCountry(); //setting countries in select options
             }
             
  	        function selectCountry(event){
@@ -142,14 +156,20 @@ https://github.com/owid/covid-19-data/tree/master/public/data
                 });
                 const data2= filtered2.filter(function (d) { return (d.x != 0) && (!isNaN(d.y)); });
                 draw(canvas2,data2,key);
-                
-                //filtering the rquired columns for the graph3 total vaccinations, new_cases, continent,location
-                var key4 ='total_vaccinations'; var key5='new_cases';
-                const filtered3= d3.map(dataset2, function(d){ 
+               
+                //for the graph3
+                vaccine_data = dataset2 ; current_key=key;
+                var key4 ='total_vaccinations';
+                drawVaccineGraph(key4)
+            }
+            function drawVaccineGraph(key4){
+                //filtering the rquired columns for the graph3 total vaccinations/ boosters , new_cases, continent,location
+                var key5='new_cases';
+                const filtered3= d3.map(vaccine_data, function(d){ 
                     if(d[key4]&& d[key5]) {return   {x:parseInt(d[key4]), y: parseInt(d[key5]),z:d.continent,t:d.location}}   return   {x:  0, y:0}
                 });
                 const data3= filtered3.filter(function (d) { return (d.x != 0) && (!isNaN(d.y)); });
-                draw(canvas3,data3,key);
+                draw(canvas3,data3,current_key);
             }
             
             //function to draw a graph
@@ -178,17 +198,17 @@ https://github.com/owid/covid-19-data/tree/master/public/data
                 svg.append("g").attr("transform", `translate(${xMax},0)`).call(d3.axisRight(y));
                 
                 // for coloring based on its color
-                var myColor = d3.scaleOrdinal().domain(unique_continents).range(d3.schemeSet3);
+                var myColor = d3.scaleOrdinal().domain(unique_countries).range(d3.schemeSet3);
 
                 var circle= svg.selectAll("dot").data(data).enter().append("circle").attr("cx", function (d) { return x(d.x);} ).attr("cy", function (d) { return y(d.y) } ).attr("r", 3)
-                .style("fill", function (d) { return myColor(d.z);}).on("mouseover", function(e,d){
+                .style("fill", function (d) { return myColor(d.t);}).on("mouseover", function(e,d){
                 svg.append("text").attr("x", d3.pointer(event)[0] ).attr("y", d3.pointer(event)[1]-5 ).text(d.t).attr("class","text");
                     // highlight(d.t ,myColor(d.z)); // function to highlight
                     highlight(d.t); // function to highlight based on country
 
                 }).on("mouseout", function(e,d){
                     d3.selectAll(".text").remove();
-                    removeHighlights(myColor(d.z));
+                    removeHighlights(myColor);
                 });
             }
             
@@ -199,10 +219,10 @@ https://github.com/owid/covid-19-data/tree/master/public/data
                 canvas2.selectAll('circle').style("fill",function(a){if(a.t==country){return "red";} return "rgba(255,0,0,0)"});
                 canvas3.selectAll('circle').style("fill",function(a){if(a.t==country){return "red";} return "rgba(255,0,0,0)"});
             }
-            function removeHighlights(color){
-                canvas1.selectAll('circle').style("fill",function(a){ return color }).attr("fill-opacity","1");
-                canvas2.selectAll('circle').style("fill",function(a){ return color }).attr("fill-opacity","1");;
-                canvas3.selectAll('circle').style("fill",function(a){ return color }).attr("fill-opacity","1");;
+            function removeHighlights(myColor){
+                canvas1.selectAll('circle').style("fill",function(a){ return myColor(a.t) }).attr("fill-opacity","1");
+                canvas2.selectAll('circle').style("fill",function(a){ return myColor(a.t) }).attr("fill-opacity","1");;
+                canvas3.selectAll('circle').style("fill",function(a){ return myColor(a.t) }).attr("fill-opacity","1");;
             }
         </script>
   </body>
