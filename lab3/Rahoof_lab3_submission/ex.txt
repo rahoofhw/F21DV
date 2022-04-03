@@ -1,0 +1,242 @@
+
+<!--
+https://covid.ourworldindata.org/data/owid-covid-data.csv
+https://github.com/owid/covid-19-data/tree/master/public/data
+-->
+
+<!--https://raw.githubusercontent.com/owid/covid-19-data/master/public/data/owid-covid-data.csv-->
+
+<!DOCTYPE html>
+<html>
+  <meta charset="utf-8" />
+  <body>
+        <label>Continents :</label>
+        <select id="continent_select" onchange = "selectContinent(event)">
+            <option selected disabled> select</option> 
+        </select>
+        <label>Countries :</label>
+        <select id="country_select" onchange = "selectCountry(event)">
+                <option selected disabled> select</option> 
+        </select>
+        <div class="row" style="padding:20px ; display: table;">
+        <div style="display: table-row; padding:10px;">
+            <div style="display: table-cell;">
+                <div style="padding:10px;"> Date Vs Total Cases</div>    
+                <div id ="canvas1"></div>   
+            </div>
+           
+            <div style="display: table-cell;; padding:10px;">
+                <div style="padding:10px;"> GDP per Capita Income Vs Total Cases</div>    
+                <div id ="canvas2"></div>
+            </div>
+            
+            <div style="display: table-cell; padding:10px;">
+                <div style="padding:10px;"> 
+                <select id="vaccine" onchange = "setVaccine(event)">
+                <option selected  value= 'total_vaccinations'> Total Vaccines</option> 
+                <option  value ='total_boosters' > Booster Vaccines</option> 
+                </select> 
+                Vs New Cases</div>    
+                <div id ="canvas3"></div>
+            </div>
+        </div>
+            
+            
+        </div>
+       
+
+        <script src='https://d3js.org/d3.v7.min.js'></script>
+         
+        <script>
+        console.log("starting ---------");
+            const csvfile = 'https://raw.githubusercontent.com/owid/covid-19-data/master/public/data/owid-covid-data.csv';
+            var dataset ;
+            var unique_continents= new Array();
+            var unique_countries= new Array();
+            const xSize = 500; const ySize = 400; const margin = 60;
+            const xMax = xSize - margin*2;const yMax = ySize - margin*2;
+             var vaccine_data; var current_key;
+            //Creating Canvas for the graphs
+            const canvas1 = d3.select("#canvas1").append("svg").attr("style", "outline: thin solid black;").attr('width', xSize ).attr('height', ySize ).append("g").attr("transform","translate(" + margin + "," + margin + ")");
+            const canvas2 = d3.select("#canvas2").append("svg").attr("style", "outline: thin solid black;").attr('width', xSize ).attr('height', ySize ).append("g").attr("transform","translate(" + margin + "," +margin + ")");
+             const canvas3 = d3.select("#canvas3").append("svg").attr("style", "outline: thin solid black;").attr('width', xSize ).attr('height', ySize ).append("g").attr("transform","translate(" + margin + "," +margin + ")");
+                  
+            //fetching data from csv url
+            d3.csv(csvfile).then(function(data) {
+                dataset = data;
+                console.log("starting ---------",data.length);
+                
+                // getting the continents present in  data
+                var continents=  d3.map(data, function(d){return d.continent;});
+                unique_continents= continents.filter((item, i, ar) => ar.indexOf(item) === i); // removing duplicates
+                setSelectContinents();
+            });
+          
+            // Function to set continents as options in continent select  dropdown
+            function setSelectContinents(){
+                console.log("in setcontinents")
+                let continent_select = document.getElementById('continent_select');
+                unique_continents.forEach(option =>{
+                    if(option){
+                        continent_select.options.add(new Option(option, option, option.selected));
+                    }
+                });
+            }
+            function setSelectCountry(){
+                let country_select = document.getElementById('country_select');
+                country_select.innerText = ' <option selected disabled> select</option> ';
+                unique_countries.forEach(option =>{
+                    if(option){
+                        country_select.options.add(new Option(option, option, option.selected));
+                    }
+                });
+                
+            }
+            function selectContinent(event){
+                console.log("selectContinent",event,event.target.value);
+                
+                //fetching continent name from event
+                var continent= event.target.value ; var key= 'continent';
+                var key1 = 'date'; var key2 = 'total_cases';key3 = 'gdp_per_capita';
+                
+                //filteing data set to get data of the continent selected
+                var dataset1=  dataset.filter(function (d) { return (d[key] == continent)});
+                 
+                   
+                // filtering countries in the selected continent
+                var countries=  d3.map(dataset1, function(d){return d['location'];});
+                unique_countries= countries.filter((item, i, ar) => ar.indexOf(item) === i);
+                console.log("countries data ",unique_countries.length);
+                setSelectCountry(); //setting countries in select options
+                
+                
+                 //filtering the rquired columns for the graph1 date, total cases, continent,location
+                const filtered= d3.map(dataset1, function(d){ 
+                    if(d[key1]&& d[key2]) {return   {x:  new Date(d[key1]), y: parseInt(d[key2]),z:d.continent,t:d.location}}
+                    return   {x:  0, y:0}
+                });
+                const data= filtered.filter(function (d) { return (d.x != 0) && (!isNaN(d.y)); });
+                draw(canvas1,data,key,true); // drawing the graph
+                
+                //filtering the rquired columns for the graph2 gdp_per_capita, total cases, continent,location
+                const filtered2= d3.map(dataset1, function(d){ 
+                    if(d[key3]&& d[key2]) {return   {x:parseInt(d[key3]), y: parseInt(d[key2]),z:d.continent,t:d.location}}
+                    return   {x:  0, y:0}
+                });
+                const data2= filtered2.filter(function (d) { return (d.x != 0) && (!isNaN(d.y)); });
+                draw(canvas2,data2,key); //drawing the graph
+
+                //for the graph3
+                vaccine_data = dataset1 ; current_key=key;
+                var key4 ='total_vaccinations';
+                drawVaccineGraph(key4) ;
+              
+            }
+            function setVaccine(event){
+                console.log( event.target.value);
+                var  key =  event.target.value;
+                if(vaccine_data && current_key){
+                    drawVaccineGraph(key) ;
+                }else{
+                    console.log("missing data" );
+                }
+                
+            }
+            
+ 	        function selectCountry(event){
+                console.log("selectContinent",event,event.target.value);
+                
+                //fetching country name from even
+                var country= event.target.value ; var key= 'location';
+                var key1 = 'date'; var key2 = 'total_cases'; key3 = 'gdp_per_capita';
+                
+                //filteing data set to get data of the country selected
+                const dataset2=  dataset.filter(function (d) { return (d[key] == country)});
+                
+                //filtering the rquired columns for the graph1 date, total cases, continent,location
+                const filtered= d3.map(dataset2, function(d){ 
+                    if(d[key1]&& d[key2]) {return   {x:  new Date(d[key1]), y: parseInt(d[key2]),z:d.continent,t:d.location}}  return   {x:  0, y:0} 
+                });
+                const data= filtered.filter(function (d) { return (d.x != 0) && (!isNaN(d.y)); });
+                draw(canvas1,data,key,true);
+                
+                //filtering the rquired columns for the graph3 total vaccinations, new_cases, continent,location
+                const filtered2= d3.map(dataset2, function(d){ 
+                    if(d[key3]&& d[key2]) {return   {x:parseInt(d[key3]), y: parseInt(d[key2]),z:d.continent,t:d.location}}  return   {x:  0, y:0}
+                });
+                const data2= filtered2.filter(function (d) { return (d.x != 0) && (!isNaN(d.y)); });
+                draw(canvas2,data2,key);
+               
+                //for the graph3
+                vaccine_data = dataset2 ; current_key=key;
+                var key4 ='total_vaccinations';
+                drawVaccineGraph(key4)
+            }
+            function drawVaccineGraph(key4){
+                //filtering the rquired columns for the graph3 total vaccinations/ boosters , new_cases, continent,location
+                var key5='new_cases';
+                const filtered3= d3.map(vaccine_data, function(d){ 
+                    if(d[key4]&& d[key5]) {return   {x:parseInt(d[key4]), y: parseInt(d[key5]),z:d.continent,t:d.location}}   return   {x:  0, y:0}
+                });
+                const data3= filtered3.filter(function (d) { return (d.x != 0) && (!isNaN(d.y)); });
+                draw(canvas3,data3,current_key);
+            }
+            
+            //function to draw a graph
+            function draw(svg,data,key,date= false){
+                console.log("draw::",data.length)
+                svg.selectAll('*').remove();
+
+                // getting the extents for x axis and y axis data
+                const xExtent = d3.extent( data, d=>{ return d.x } );
+                const yExtent = d3.extent( data, d=>{ return d.y } );
+                
+                console.log(xExtent,yExtent);
+                // X Axis if  date  is true use time scale else linear scale
+                var x  ;
+                if(date){
+                    x= d3.scaleTime().domain([ xExtent[0], xExtent[1] ]).range([0, xMax]);
+                }else{
+                    x= d3.scaleLinear().domain([ xExtent[0], xExtent[1] ]).range([0, xMax]);
+                }
+                svg.append("g").attr("transform", "translate(0," + yMax + ")").call(d3.axisBottom(x)); 
+                svg.append("g").call(d3.axisTop(x));
+                
+                // Y Axis
+                const y = d3.scaleLinear().domain([ yExtent[0], yExtent[1] ]).range([ yMax, 0]);
+                svg.append("g").call(d3.axisLeft(y));
+                svg.append("g").attr("transform", `translate(${xMax},0)`).call(d3.axisRight(y));
+                
+                // for coloring based on its color
+                var myColor = d3.scaleOrdinal().domain(unique_countries).range(d3.schemeSet3);
+
+                var circle= svg.selectAll("dot").data(data).enter().append("circle").attr("cx", function (d) { return x(d.x);} ).attr("cy", function (d) { return y(d.y) } ).attr("r", 3)
+                .style("fill", function (d) { return myColor(d.t);}).on("mouseover", function(e,d){
+                svg.append("text").attr("x", d3.pointer(event)[0] ).attr("y", d3.pointer(event)[1]-5 ).text(d.t).attr("class","text");
+                    // highlight(d.t ,myColor(d.z)); // function to highlight
+                    highlight(d.t); // function to highlight based on country
+
+                }).on("mouseout", function(e,d){
+                    d3.selectAll(".text").remove();
+                    removeHighlights(myColor);
+                });
+            }
+            
+            function highlight(country){
+                console.log("in highlight ")
+                // highlighting if the country of point is same as the counttry recived 
+                canvas1.selectAll('circle').style("fill",function(a){if(a.t==country){return "red";} return "rgba(255,0,0,0)"});
+                canvas2.selectAll('circle').style("fill",function(a){if(a.t==country){return "red";} return "rgba(255,0,0,0)"});
+                canvas3.selectAll('circle').style("fill",function(a){if(a.t==country){return "red";} return "rgba(255,0,0,0)"});
+            }
+            function removeHighlights(myColor){
+                canvas1.selectAll('circle').style("fill",function(a){ return myColor(a.t) }).attr("fill-opacity","1");
+                canvas2.selectAll('circle').style("fill",function(a){ return myColor(a.t) }).attr("fill-opacity","1");;
+                canvas3.selectAll('circle').style("fill",function(a){ return myColor(a.t) }).attr("fill-opacity","1");;
+            }
+        </script>
+  </body>
+</html>
+
+
+
