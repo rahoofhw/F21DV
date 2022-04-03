@@ -1,0 +1,121 @@
+<!--https://gist.githubusercontent.com/rasheed20/2e3f2bf9aa7e31b76614f88abceeddb3/raw/india_topo.json-->
+
+<html>
+    <body>
+        <style>
+            body {
+                background-color: #1B1F2A; width: 100%;
+                font-family: 'Roboto', sans-serif;  height: fit-content;
+            }
+            .path {
+                stroke: white; stroke-width: 0.25px;
+                fill: #87CEEB	; fill-opacity:0.4;
+            }
+            .widget {
+                margin: 0 auto;width:fit-content; height:fit-content;
+                margin-top:50px; background-color: #222D3A;border-radius: 5px;
+                box-shadow: 0px 0px 1px 0px #06060d;
+            }
+            
+            .header{
+                background-color: #29384D;height:40px;color:#929DAF;
+                text-align: center;line-height: 40px;font-weight: 400;
+                border-top-left-radius: 7px; border-top-right-radius: 7px;
+                font-size: 1.5em; text-shadow: 1px 1px #06060d;
+            }
+            
+            .chart-container{
+                padding:25px;
+            }
+            
+            .shadow {
+                -webkit-filter: drop-shadow( 0px 3px 3px rgba(0,0,0,.5) );
+                filter: drop-shadow( 0px 3px 3px rgba(0,0,0,.5) );
+            }
+
+            .arc {stroke: #000; stroke-wdith :2px;box-shadow: 5px 5px #888888}
+        </style>
+    
+	<script src="https://unpkg.com/topojson@3"></script>
+    	<script src="https://d3js.org/d3.v7.min.js"></script>
+        <button onclick="drawPieChart(data1)">Data 1</button>
+        <button onclick="drawPieChart(data2)">Data 2</button>
+        <div class="widget">
+            <div class="header">Site Visitors</div>
+            <div id="canvas2" class="chart-container"></div>
+        </div>
+        <div class="widget">
+            <div class="header">Site Visitors</div>
+            <div id="canvas1" class="chart-container"></div>
+        </div>
+        
+        <script>
+        
+            var width1 = 450, height1 = 450, margin = 40;
+            var width2 = 1000, height2 = 700;
+
+            var radius = Math.min(width1, height1) / 2 - margin
+            
+            var svg = d3.select("#canvas1") .append("svg")
+                        .attr("width", width1).attr("height", height1) .append("g")
+                        .attr("transform", "translate(" + width1 / 2 + "," + height1 / 2 + ")");
+             var svg2 = d3.select("#canvas2") .append("svg")
+                        .attr("width", width2).attr("height", height2) .append("g");
+            var data1 = {a: 9, b: 20, c:30, d:8, e:12}
+            var data2 = {a: 6, b: 16, c:10, d:14, e:1, f:12}
+            
+            var color = d3.scaleOrdinal().domain(["a", "b", "c", "d", "e", "f"]).range(d3.schemeSet3);
+            
+            function drawPieChart(data) {
+                d= Object.values(data);
+                
+                var pie = d3.pie();
+                var arc = d3.arc().innerRadius(0).outerRadius(radius);
+                var data_ready = pie(d)
+                
+                var u = svg.selectAll("path").data(data_ready);
+                var arcs = u .enter().append('path');
+                
+                arcs.merge(u).transition().duration(2000).attr('d', arc ).attr("class", "arc")
+                .attr('fill', function(d){return color(d.value) });
+                
+                arcs.on("mouseover", function(d, i) { console.log(i.value); })
+                
+                // remove the group that is not present anymore
+                u.exit().remove()
+            }
+            
+            function drawMap(){
+                
+                // var projection = d3.geoMercator().center([0, 5 ]).scale(150).rotate([-180,0]);
+                var projection = d3.geoMercator();
+                                
+                var path = d3.geoPath().projection(projection);
+                
+                var g = svg2.append("g");
+                
+                // load and display the World
+                d3.json("https://raw.githubusercontent.com/deldersveld/topojson/master/world-countries.json").then(function(topology) {
+                    console.log("topology ",topology);
+                    var topologypath = g.selectAll("path")
+                       .data(topojson.feature(topology, topology.objects.countries1).features)
+                       .enter().append("path")
+                       .attr("d", path).attr("class",'path')
+                       .on("mouseover",function(d,i){
+                           console.log(d,i);
+                       });
+                       console.log("topologypath :::",topologypath)
+                
+                });
+            }
+            
+            
+            drawMap();
+            drawPieChart(data1);
+        
+        </script>
+    </body>
+</html>
+
+
+

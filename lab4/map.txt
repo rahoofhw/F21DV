@@ -1,3 +1,5 @@
+//https://gist.githubusercontent.com/d3noob/82f4db23d47971c74699abb5f4bf8204/raw/6e0a14d8753f629c29548d8ccce8c3fd7ab40d17/world-110m2.json
+
 <!DOCTYPE html>
 <meta charset="utf-8">
 <style>
@@ -29,14 +31,14 @@ var path = d3.geoPath()
 var g = svg.append("g");
 
 // load and display the World
-d3.json("https://gist.githubusercontent.com/d3noob/82f4db23d47971c74699abb5f4bf8204/raw/6e0a14d8753f629c29548d8ccce8c3fd7ab40d17/world-110m2.json").then(function(topology) {
-
+d3.json("https://raw.githubusercontent.com/deldersveld/topojson/master/world-countries.json").then(function(topology) {
+console.log("topology ",topology);
    var topologypath = g.selectAll("path")
-       .data(topojson.feature(topology, topology.objects.countries).features)
+       .data(topojson.feature(topology, topology.objects.countries1).features)
        .enter().append("path")
        .attr("d", path)
-       .on("mouseover",function(d){
-           console.log(d);
+       .on("mouseover",function(d,i){
+           console.log(d,i);
        });
        console.log("topologypath :::",topologypath)
 
