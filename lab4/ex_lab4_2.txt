@@ -58,8 +58,6 @@
   <script src="https://d3js.org/d3.v7.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/d3-geo-projection@4"></script>
 
-  <button onclick="drawPieChart(data1)">Data 1</button>
-  <button onclick="drawPieChart(data2)">Data 2</button>
   <div class="widget">
     <div class="header">Site Visitors</div>
     <div id="canvas2" class="chart-container"></div>
@@ -87,9 +85,6 @@
      var svg3 = d3.select("#canvas3").append("svg")
       .attr("width", width2).attr("height", height2).append("g");
     
-    var data1 = { a: 9, b: 20, c: 30, d: 8, e: 12 }
-    var data2 = { a: 6, b: 16, c: 10, d: 14, e: 1, f: 12 }
-
     var color = d3.scaleOrdinal().domain(["a", "b", "c", "d", "e", "f"]).range(d3.schemeSet3);
     
     // var dataurl = "https://gist.githubusercontent.com/rahoofhw/23f90643b01aaa07a17e779910cdc405/raw/meteorite-landings.csv";
@@ -105,7 +100,7 @@
     });
     
     function drawMeteorsPerType(Data){
-        let key = 'cname';
+        let key = 'recclass';
         var filteredData={} ;
         Data.forEach(a=>{
             if(!filteredData.hasOwnProperty([a[key]])){
@@ -149,7 +144,6 @@
      
       arcs.on("mouseover", function (d, i) { 
         d3.select(this).attr('d',function(d){return d3.arc().innerRadius(0).outerRadius(radius+10)(d)});
-        tooltip.style("visibility", "visible");
       })
     
 arcs.on("mousemove", handlemousemove)
