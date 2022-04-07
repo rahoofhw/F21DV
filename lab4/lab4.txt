@@ -135,6 +135,7 @@
             }
             filteredData[a[key]]= filteredData[a[key]]+1;
         })
+        delete filteredData[""];
         Object.keys(filteredData).forEach(a=>{
             bardata.push({'cname':a,'value':filteredData[a]});
         })
@@ -182,7 +183,9 @@
     }
     
     function drawBarChart( data){
+        svg3.selectAll("*").remove();
    
+   console.log("\n\n drawBarChart :::",data)
   // sort data
   data.sort(function(b, a) {
     return a.Value - b.Value;
@@ -217,11 +220,13 @@
       .attr("y", function(d) { return y(d.value); })
       .attr("width", x.bandwidth())
       .attr("height", function(d) { return height3 - y(d.value); })
-      .attr("fill", "#69b3a2")
+      .attr("fill", "#69b3a2");
+      
+      u.exit().remove();
     } 
     
 
-    function drawMap() {
+   function drawMap() {
       var path = d3.geoPath().projection(projection);
     //   var g = svg2.append("g");
     
@@ -254,21 +259,32 @@
         if(meteorsflag){
             let generator = d3.geoPath().projection(projection);
             currentData.forEach(point =>{
-                //console.log(point)
+                console.log(point)
+                
                 var circle = d3.geoCircle().center([point.reclong,point.reclat]).radius(2);
                 var tip = d3.tip().attr('class', 'd3-tip')
                   .offset([-20, 0]) .html(function(d) {
-                    //console.log(d);
-                    return "<span  style='color:blue'>"+JSON.stringify(point)  + "</span>";
+                      
+                    return getPopupText(point);
                   })
                 svg2.append('path').attr('d', generator(circle())).attr('stroke', '#000').attr("class","marker").attr('fill', '#ff0').on("mouseover",tip.show).on("mouseout", tip.hide).call(tip);
         
             })    
         }
-        
-        
     }
-    
+    function getPopupText(point){
+        console.log(point)
+        var htmlString = '<table>'+
+        '<tr> <td>Id</td>  <td>:</td> <td>'+point.id+'</td> </tr>'+
+        '<tr> <td>Meteor name</td>  <td>:</td> <td>'+point.meteor_name+'</td> </tr>'+
+        '<tr> <td>mass</td>  <td>:</td> <td>'+point.mass+'</td> </tr>'+
+        '<tr> <td>Class</td>  <td>:</td> <td>'+point.recclass+'</td> </tr>'+
+        '<tr> <td>Country</td>  <td>:</td> <td>'+point.cname+'</td> </tr>'+
+
+        '</table>'; 
+        return htmlString
+    }
+     
     function filterDataAndProcess(){
         currentData =  csvData.filter(item =>{
             for (var key in filters) {
